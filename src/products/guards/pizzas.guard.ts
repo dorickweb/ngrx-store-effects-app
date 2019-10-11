@@ -14,20 +14,20 @@ export class PizzasGuard implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.checkStore().pipe(
-      switchMap(() => of(true)),
+      switchMap(() => of(true)), //of is used to make it an Observable
       catchError(() => of(false))
     );
   }
 
   checkStore(): Observable<boolean> {
     return this.store.select(fromStore.getPizzasLoaded).pipe(
-      tap(loaded => {
+      tap(loaded => {  //tap basically takes place outside the stream
         if (!loaded) {
           this.store.dispatch(new fromStore.LoadPizzas());
         }
       }),
-      filter(loaded => loaded),
-      take(1)
+      filter(loaded => loaded),  //because of tap, we use this filter to continue the stream of the Observable
+      take(1)   //this will then basically say take one value, we don't really care about it, and then complete the stream
     );
   }
 }
